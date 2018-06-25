@@ -1,0 +1,9 @@
+1. Enable CSS modules - Css classes in a file can scope to specific component, not globally
+    npm run eject -> access the 2 webpack.config files in config folder 
+    -> go to test: /\css$/ and add under options:
+                               add modules: true, 
+                               localIdentName: '[name]_[local]__[hash:base64:5]'
+        do the same in the second file under test:  /\css$/
+            in options, under the sourceMap:
+
+            
