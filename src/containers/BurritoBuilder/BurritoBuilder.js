@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import Aux from '../../hoc/Aux';
+import Aux from '../../hoc/Auxil';
+import Burrito from '../../components/Burrito/Burrito'
 
 class BurritoBuilder extends Component {
     render() {
         return (
             <Aux>
-                <div>Burrito</div>
-                <div>Build Controls</div>
+                <Burrito />
             </Aux>
         )
     }
