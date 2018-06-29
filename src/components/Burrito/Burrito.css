@@ -7,7 +7,18 @@
     font-weight: bold;
     font-size: 1.2rem;
 }
-
+.container{
+    display: grid;
+    grid-template-columns: auto auto auto;
+    grid-gap: 2px;
+    padding: 1px;
+    background-color: rgba(255, 58, 84, 0.466);
+    justify-content: space-evenly;
+}
+.container > div {
+    border: 2px solid black;
+    text-align: center;
+}
 @media (min-width: 1000px) and (min-height: 700px) {
     .Burrito{
         width: 700px;
