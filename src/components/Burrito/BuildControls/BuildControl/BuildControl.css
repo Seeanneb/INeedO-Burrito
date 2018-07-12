@@ -1,6 +1,7 @@
 
 .BuildControl {
     display: flex;
+    flex-flow: column;
     flex-wrap: wrap;
     flex-direction: row;
     justify-content: space-between;
