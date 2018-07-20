@@ -1,16 +1,29 @@
 
 .BuildControl {
-    display: flex;
-    flex-flow: column;
-    flex-wrap: wrap;
-    flex-direction: row;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 2px 2px 2px;
+    grid-template-rows: 9px 9px 9px;
+    justify-content: space-around;
     align-items: center;
     margin: 5px 0;
 }
 
-.BuildControl button {
+.BuildControl div {
+    text-align: center;
     display: block;
+    width: 100px ;
+    background: rgb(255, 190, 190);
+    color: rgb(255, 29, 67);
+    font: icon;
+    border:rgb(255, 29, 67) 1.3px solid;
+    padding: 5px 0px 5px 0px;
+
+}
+
+.BuildControl button {
+    display: grid;
+    grid-template-columns: 2px 2px 2px;
+    grid-template-rows: 12px 12px 12px;
     font: inherit;
     padding: 5px;
     margin: 0 5px;

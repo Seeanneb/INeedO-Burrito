@@ -20,8 +20,8 @@
 .NavigationItem a:hover,
 .NavigationItem a:active,
 .NavigationItem a.active {
-    border-bottom: 4px solid skyblue;
-    border-left: 4px solid skyblue;
+    border-bottom: 4px solid rgb(255, 69, 69);
+    border-left: 4px solid rgb(255, 69, 69);
     color: rgb(201, 0, 167);
 }
 
@@ -44,8 +44,9 @@
     .NavigationItem a:hover,
     .NavigationItem a:active,
     .NavigationItem a.active {
-        background-color: rgb(151, 81, 114);
+        background-color:  rgb(214, 21, 54);
         border-bottom: #9b328f ;
-        color: rgb(151, 18, 18);
+        color: rgb(255, 255, 255);
+        
     }
 }

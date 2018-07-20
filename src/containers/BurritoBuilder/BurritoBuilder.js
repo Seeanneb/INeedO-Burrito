@@ -4,6 +4,9 @@ import Burrito from '../../components/Burrito/Burrito'
 import BuildControls from '../../components/Burrito/BuildControls/BuildControls'
 import Modal from '../../components/UI/Modal/Modal'
 import OrderSummary from '../../components/Burrito/OrderSummary/OrderSummary'
+import axios from '../../axios-orders'
+import Spinner from '../../components/UI/Spinner/Spinner'
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
 const INGREDIENT_PRICES = {
     beans: .5,
@@ -65,18 +68,19 @@ class BurritoBuilder extends Component {
         totalPrice: 4,
         purchaseable: false,
         purchasing: false,
+        loading: false,
     }
 
-    updatePurchaseState(ingredients){
-        
+    updatePurchaseState(ingredients) {
+
         const sum = Object.keys(ingredients)
-                    .map(igKey => {
-                        return ingredients[igKey]
-                    })
-                    .reduce((sum, element) => {
-                        return sum + element
-                    },0);
-            this.setState({purchaseable: sum > 0})
+            .map(igKey => {
+                return ingredients[igKey]
+            })
+            .reduce((sum, element) => {
+                return sum + element
+            }, 0);
+        this.setState({ purchaseable: sum > 0 })
     }
 
     addIngredientHandler = (type) => {
@@ -110,15 +114,38 @@ class BurritoBuilder extends Component {
     }
 
     purchaseHandler = () => {
-        this.setState({purchasing: true})
+        this.setState({ purchasing: true })
     }
 
     purchaseCancelHandler = () => {
-        this.setState({purchasing: false});
+        this.setState({ purchasing: false });
     }
 
     purchaseContinueHandler = () => {
-        alert('You Did it YUUUMMMY')
+        this.setState({loading: true}) 
+        // alert('You Did it YUUUMMMY')
+        const order = {
+            ingredients: this.state.ingredients,
+            price: this.state.totalPrice,
+            customer: {
+                name: 'Sean',
+                address: {
+                    street: '123 Deez',
+                    zip: '12345',
+                    country: 'America'
+                },
+                email: '420@Blazeit.com'
+            },
+            deliveryMethod: '1DAY'
+        }
+        axios.post('/orders.json', order)
+            .then(response => { 
+                this.setState({loading: false, purchasing: false})
+                console.log('response ' + response) })
+            .catch(error => { 
+                this.setState({loading: false, purchasing: false})
+                console.log('error ' + error) })
+
     }
 
     render() {
@@ -128,25 +155,29 @@ class BurritoBuilder extends Component {
         for (let key in disabledInfo) {
             disabledInfo[key] = disabledInfo[key] <= 0
         }
+        let orderSummary = <OrderSummary ingredients={this.state.ingredients}
+            price={this.state.totalPrice}
+            purchaseCancelled={this.purchaseCancelHandler}
+            purchaseContinued={this.purchaseContinueHandler} />;
+        if (this.state.loading) {
+            orderSummary = <Spinner />
+        }
         return (
             <Aux>
                 <Modal modalClosed={this.purchaseCancelHandler} show={this.state.purchasing}>
-                    <OrderSummary ingredients={this.state.ingredients}
-                        price={this.state.totalPrice}
-                        purchaseCancelled={this.purchaseCancelHandler}
-                        purchaseContinued={this.purchaseContinueHandler}/>
+                    {orderSummary}
                 </Modal>
                 <BuildControls
                     ingredientAdded={this.addIngredientHandler}
                     ingredientRemoved={this.removeIngredientHandler}
-                    disabled = {disabledInfo} 
-                    purchaseable = {this.state.purchaseable}
-                    price = {this.state.totalPrice} 
-                    ordered = {this.purchaseHandler} />
+                    disabled={disabledInfo}
+                    purchaseable={this.state.purchaseable}
+                    price={this.state.totalPrice}
+                    ordered={this.purchaseHandler} />
                 <Burrito ingredients={this.state.ingredients} />
             </Aux>
         )
     }
 }
 
-export default BurritoBuilder;
+export default withErrorHandler(BurritoBuilder, axios);
