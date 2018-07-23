@@ -11,64 +11,57 @@ import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 const INGREDIENT_PRICES = {
     beans: .5,
     beef: .75,
-    beer: 2,
     cheese: .5,
     chicken: .75,
     chips: 1,
-    'corn-tortilla': 0,
     egg: .5,
     fish: 1,
-    'flour-tortilla': 0,
+    tortilla: 0,
     fries: .5,
     guacamole: .75,
-    'hot-pepper': .25,
     'hot-sauce': 0,
-    juice: 1,
-    lettuce: 0,
-    onion: 0,
     pork: .75,
     rice: .5,
     salsa: 0,
-    soda: 1,
     'sour-cream': 0,
-    tofu: 1,
-    tomato: 0,
-    water: 1
+    vegetables: 0
 }
 
 class BurritoBuilder extends Component {
     state = {
-        ingredients: {
-            beans: 0,
-            beef: 0,
-            beer: 0,
-            cheese: 0,
-            chicken: 0,
-            chips: 0,
-            'corn-tortilla': 0,
-            egg: 0,
-            fish: 0,
-            'flour-tortilla': 1,
-            fries: 0,
-            guacamole: 0,
-            'hot-pepper': 0,
-            'hot-sauce': 0,
-            juice: 0,
-            lettuce: 0,
-            onion: 0,
-            pork: 0,
-            rice: 0,
-            salsa: 0,
-            soda: 0,
-            'sour-cream': 0,
-            tofu: 0,
-            tomato: 0,
-            water: 0
-        },
+        ingredients: null, // {
+            // beans: 0,
+            // beef: 0,
+            // cheese: 0,
+            // chicken: 0,
+            // chips: 0,
+            // egg: 0,
+            // fish: 0,
+            // tortilla: 1,
+            // fries: 0,
+            // guacamole: 0,
+            // 'hot-sauce': 0,
+            // pork: 0,
+            // rice: 0,
+            // salsa: 0,
+            // 'sour-cream': 0,
+            // vegetables: 0
+       // },
         totalPrice: 4,
         purchaseable: false,
         purchasing: false,
         loading: false,
+        error: false
+    }
+
+    componentDidMount(){
+        axios.get('https://ineedoburrito.firebaseio.com/ingredients.json')
+            .then(response => {
+                this.setState({ingredients: response.data});
+            })
+            .catch(error => {
+                this.setState({error: true})
+            })
     }
 
     updatePurchaseState(ingredients) {
@@ -155,11 +148,31 @@ class BurritoBuilder extends Component {
         for (let key in disabledInfo) {
             disabledInfo[key] = disabledInfo[key] <= 0
         }
-        let orderSummary = <OrderSummary ingredients={this.state.ingredients}
+        let orderSummary = null;
+        
+        if (this.state.loading) {
+            orderSummary = <Spinner />
+        }
+        let burger = this.state.error ? <p>Ingredients didnt do nuthin</p> : <Spinner />
+
+        if (this.state.ingredients){
+        burger = (
+        <Aux>
+         <BuildControls
+            ingredientAdded={this.addIngredientHandler}
+            ingredientRemoved={this.removeIngredientHandler}
+            disabled={disabledInfo}
+            purchaseable={this.state.purchaseable}
+            price={this.state.totalPrice}
+            ordered={this.purchaseHandler} />
+         <Burrito ingredients={this.state.ingredients} />
+         </Aux>)
+         orderSummary = <OrderSummary ingredients={this.state.ingredients}
             price={this.state.totalPrice}
             purchaseCancelled={this.purchaseCancelHandler}
             purchaseContinued={this.purchaseContinueHandler} />;
-        if (this.state.loading) {
+        }
+        if (this.state.loading){
             orderSummary = <Spinner />
         }
         return (
@@ -167,14 +180,7 @@ class BurritoBuilder extends Component {
                 <Modal modalClosed={this.purchaseCancelHandler} show={this.state.purchasing}>
                     {orderSummary}
                 </Modal>
-                <BuildControls
-                    ingredientAdded={this.addIngredientHandler}
-                    ingredientRemoved={this.removeIngredientHandler}
-                    disabled={disabledInfo}
-                    purchaseable={this.state.purchaseable}
-                    price={this.state.totalPrice}
-                    ordered={this.purchaseHandler} />
-                <Burrito ingredients={this.state.ingredients} />
+                {burger}
             </Aux>
         )
     }

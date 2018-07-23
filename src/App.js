@@ -7,7 +7,7 @@ class App extends Component {
     return (
       <div>
        <Layout>
-        <BurritoBuilder />
+       <BurritoBuilder />
        </Layout> 
       </div>
     );
